@@ -20,6 +20,12 @@ UI.prototype.addBookToList = book => {
   list.appendChild(row)
 }
 
+UI.prototype.deleteBook = target => {
+  if(target.className === 'delete') {
+    target.parentElement.parentElement.remove()
+  }
+}
+
 UI.prototype.clearFields = () => {
   document.getElementById('title').value = ''
   document.getElementById('author').value = ''
@@ -51,13 +57,17 @@ document.getElementById('book-form').addEventListener('submit', event => {
 
   if (title === '' || author === '' || isbn === '') {
     ui.showAlert('Please fill in all fields', 'error')
-  } else {
+  } else {``
     ui.addBookToList(book)
     ui.showAlert('Book Added', 'success')
     ui.clearFields()
   }
+  event.preventDefault()
+})
 
-
-
+document.getElementById('book-list').addEventListener('click', event => {
+  const ui = new UI()
+  ui.deleteBook(event.target)
+  ui.showAlert('Book removed', 'success')
   event.preventDefault()
 })
