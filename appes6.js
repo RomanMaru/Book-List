@@ -1,8 +1,8 @@
 class Book {
   constructor(title, author, isbn) {
     this.title = title,
-    this.author = author,
-    this.isbn = isbn
+      this.author = author,
+      this.isbn = isbn
   }
 }
 
@@ -18,20 +18,32 @@ class Store {
     return books
   }
 
-  static displayBooks () {
+  static displayBooks() {
+    const books = Store.getBooks()
 
+    books.forEach(book => {
+      const ui = new UI
+
+      ui.addBookToList(book)
+    })
   }
 
-  static addBook(book){
+  static addBook(book) {
     const books = Store.getBooks()
 
     books.push(book)
 
-    localStorage.setItem('books', JSON.stringify(books) )
+    localStorage.setItem('books', JSON.stringify(books))
   }
 
-  static removeBook(){
-    
+  static removeBook(isbn, index) {
+    const books = Store.getBooks()
+    books.forEach(book => {
+      if (book.isbn === isbn) {
+        books.splice(index, 1)
+      }
+    })
+    localStorage.setItem('books', JSON.stringify(books))
   }
 }
 
@@ -77,10 +89,12 @@ class UI {
   }
 }
 
+document.addEventListener('DOMContentLoaded', Store.displayBooks)
+
 document.getElementById('book-form').addEventListener('submit', event => {
   const title = document.getElementById('title').value,
-        author = document.getElementById('author').value,
-        isbn = document.getElementById('isbn').value
+    author = document.getElementById('author').value,
+    isbn = document.getElementById('isbn').value
 
   const book = new Book(title, author, isbn)
 
@@ -88,7 +102,8 @@ document.getElementById('book-form').addEventListener('submit', event => {
 
   if (title === '' || author === '' || isbn === '') {
     ui.showAlert('Please fill in all fields', 'error')
-  } else {``
+  } else {
+    ``
     ui.addBookToList(book)
     ui.showAlert('Book Added', 'success')
     Store.addBook(book)
@@ -100,6 +115,7 @@ document.getElementById('book-form').addEventListener('submit', event => {
 document.getElementById('book-list').addEventListener('click', event => {
   const ui = new UI()
   ui.deleteBook(event.target)
+  Store.removeBook(event.target.parentElement.previousElementSibling.textContent)
   ui.showAlert('Book removed', 'success')
   event.preventDefault()
 })
