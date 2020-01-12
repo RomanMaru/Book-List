@@ -20,6 +20,26 @@ UI.prototype.addBookToList = book => {
   list.appendChild(row)
 }
 
+UI.prototype.clearFields = () => {
+  document.getElementById('title').value = ''
+  document.getElementById('author').value = ''
+  document.getElementById('isbn').value = ''
+}
+
+UI.prototype.showAlert = (msg, className) => {
+  const div = document.createElement('div')
+  div.className = `alert ${className}`
+  div.appendChild(document.createTextNode(msg))
+
+  const container = document.querySelector('.container')
+  const form = document.querySelector('#book-form')
+
+  container.insertBefore(div, form)
+  setTimeout(() => {
+    document.querySelector('.alert').remove()
+  }, 3000)
+}
+
 document.getElementById('book-form').addEventListener('submit', event => {
   const title = document.getElementById('title').value,
     author = document.getElementById('author').value,
@@ -29,7 +49,15 @@ document.getElementById('book-form').addEventListener('submit', event => {
 
   const ui = new UI()
 
-  ui.addBookToList(book)
+  if (title === '' || author === '' || isbn === '') {
+    ui.showAlert('Please fill in all fields', 'error')
+  } else {
+    ui.addBookToList(book)
+    ui.showAlert('Book Added', 'success')
+    ui.clearFields()
+  }
+
+
 
   event.preventDefault()
 })
